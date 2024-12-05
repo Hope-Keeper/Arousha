@@ -9,7 +9,7 @@ import java.util.List;
 
 public interface IDocumentRepository extends JpaRepository<Document,Long> {
 
-    @Query("SELECT d FROM DocumentDetail de JOIN de.document d WHERE de.documentDetailKey = :value")
+    @Query("SELECT d FROM DocumentDetail de JOIN de.document d WHERE de.documentDetailValue LIKE %:value%")
     List<Document> findByValue(@Param("value") String value);
 
 
