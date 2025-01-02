@@ -3,15 +3,18 @@ server:
   port: 9192
 
 spring:
-  datasource:
-    username: postgres
-    password: Rh@13801018
-    url: jdbc:postgresql://localhost:5432/arousha
-    driver-class-name: org.postgresql.Driver
+  r2dbc:
+    url: r2dbc:postgresql://localhost:5432/todo-db
+    username: root
+    password: root
+
+  spring doc:
+    swagger-ui:
+      path: /api
   jpa:
     show-sql: true
     hibernate:
-      ddl-auto: create
+      ddl-auto: validate
       format_sql: true
 
   security:
