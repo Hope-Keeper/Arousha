@@ -1,6 +1,6 @@
 package com.hotel.demo.service;
 
-import IDocumentRepository
+import com.hotel.demo.repository.IDocumentRepository
 import com.hotel.demo.dto.DocumentDto
 import com.hotel.demo.mapper.DocumentMapper;
 import com.hotel.demo.model.Document;
@@ -19,23 +19,23 @@ class DocumentService(
 ) : IDocumentService {
 
     override fun createDocument(documentDto: DocumentDto): Mono<DocumentDto> {
-        val listOfKeys = documentDto.body.keys.toList()
+        val listOfKeys = documentDto.body?.keys?.toList()
 
-        val existsDoc = documentRepository.findByIdentifier(documentDto.identifier)
+        val existsDoc = documentRepository.findByIdentifier(documentDto.identifier!!)
         val toBeDeleted = existsDoc.flatMap { document ->
-            documentDetailRepository.getListOfDocumentDetailsByDocumentId(document.id)
-                .filter { detail -> !listOfKeys.contains(detail.documentDetailKey) }
+            documentDetailRepository.getListOfDocumentDetailsByDocumentId(document.id !!)
+                .filter { detail -> listOfKeys?.contains(detail.documentDetailKey!!)!! }
                 .collectList()
         }
 
         val newDocument = Document(identifier = documentDto.identifier)
         val savedDocument = documentRepository.save(newDocument)
 
-        val bodyDetails = documentDto.body.entries.mapNotNull { (key, value) ->
-            if (listOfKeys.contains(key)) DocumentDetail(null, key, value, newDocument) else null
+        val bodyDetails = documentDto.body?.entries?.mapNotNull { (key, value) ->
+            if (listOfKeys?.contains(key)!!) DocumentDetail(null, key, value, newDocument.id) else null
         }
 
-        val savedDetails = documentDetailRepository.saveAll(bodyDetails).collectList()
+        val savedDetails = documentDetailRepository.saveAll(bodyDetails!!).collectList()
 
         return Mono.zip(savedDocument, savedDetails, toBeDeleted)
             .map { t ->
@@ -46,7 +46,7 @@ class DocumentService(
     override fun getDocuments(value: String): Flux<DocumentDto> {
         return documentRepository.findByValue(value)
         .flatMap { document ->
-            documentDetailRepository.getListOfDocumentDetailsByDocumentId(document.id)
+            documentDetailRepository.getListOfDocumentDetailsByDocumentId(document.id !!)
                 .collectList()
                 .map { details -> DocumentMapper.mapToDocumentDto(document, details) }
         }

@@ -1,15 +1,12 @@
 package com.hotel.demo.model
 
-import jakarta.persistence.*
-import java.math.BigDecimal
-import java.sql.Blob
-import java.util.*
 
-@Entity
+import org.springframework.data.annotation.Id
+import org.springframework.data.relational.core.mapping.Table
+
+@Table
 data class Document(
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    val id: Long?,
-
-    val identifier: String
+    val id :Long?=null,
+    val identifier: String?=null
 )

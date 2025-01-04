@@ -1,6 +1,10 @@
 package com.hotel.demo.dto;
 
+import org.jetbrains.annotations.NotNull
+
 data class DocumentDto(
-    val identifier: String,
-    val body: Map<String, String>
+    @NotNull
+    val identifier: String?=null,
+    @NotNull
+    val body: Map<String?, String? >?=null
 )

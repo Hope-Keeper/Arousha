@@ -1,16 +1,19 @@
 package com.hotel.demo.model;
-import jakarta.persistence.*;
+import org.springframework.data.annotation.Id
+import org.springframework.data.relational.core.mapping.Table
 
-@Entity
+@Table
 data class DocumentDetail(
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    val id: Long?,
 
-    val documentDetailKey: String,
-    val documentDetailValue: String,
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name="document_id")
-    val document: Document
+    @Id
+    val id: Long?=null,
+
+    val documentDetailKey: String?=null,
+    val documentDetailValue: String?=null,
+    val documentId:Long?=null,
+
+//    @ManyToOne(fetch = FetchType.LAZY)
+//    @JoinColumn(name="document_id")
+//    val document: Document
 
 )
