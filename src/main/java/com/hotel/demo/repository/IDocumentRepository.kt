@@ -8,13 +8,7 @@ import reactor.core.publisher.Mono
 
 interface IDocumentRepository : ReactiveCrudRepository<Document, Long> {
 
-    @Query(
-        """
-        SELECT d FROM DocumentDetail de 
-        JOIN de.document d 
-        WHERE de.documentDetailValue LIKE %:value%
-        """
-    )
+    @Query("""SELECT d FROM DocumentDetail de JOIN de.document d WHERE de.documentDetailValue LIKE %:value%""")
     fun findByValue(value: String): Flux<Document>
 
     fun findByIdentifier(identifier: String): Mono<Document>

@@ -1,4 +1,3 @@
-
 server:
   port: 9192
 
@@ -8,15 +7,17 @@ spring:
     username: root
     password: root
 
-  spring doc:
+  springdoc:
+    api-docs:
+      enabled: true
     swagger-ui:
-      path: /api
-  jpa:
-    show-sql: true
-    hibernate:
-      ddl-auto: validate
-      format_sql: true
+      path: /swagger-ui.html
 
+  
+  
+  
+  
+  
   security:
     user:
       name: user
