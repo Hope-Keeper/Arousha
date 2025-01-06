@@ -4,9 +4,9 @@ package com.hotel.demo.model
 import org.springframework.data.annotation.Id
 import org.springframework.data.relational.core.mapping.Table
 
-@Table
+@Table("documents")
 data class Document(
     @Id
-    val id: Long? = null,
-    val identifier: String? = null
+    var id: Long? = null,
+    val identifier: String
 )

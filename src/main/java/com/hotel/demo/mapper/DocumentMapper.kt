@@ -8,9 +8,9 @@ object DocumentMapper {
 
 
     fun mapToDocumentDto(document: Document, documentDetail: List<DocumentDetail>): DocumentDto =
-         DocumentDto(
+        DocumentDto(
             document.identifier!!,
-            documentDetail.associate { Pair(it.documentDetailKey,it.documentDetailValue) }
+            documentDetail.associate { Pair(it.documentDetailKey, it.documentDetailValue) }
         )
 
     //    public static Document mapToDocument(DocumentDto documentDto) {
@@ -18,14 +18,7 @@ object DocumentMapper {
     //              documentDto.getIdentifier(),documentDto.getBody()
     //        );
     //    }
-    fun mapToDocument(documentDto: DocumentDto): Document = Document(null,documentDto.identifier!!)
+    fun mapToDocument(documentDto: DocumentDto): Document = Document(null, documentDto.identifier!!)
 
 
-
-
-
-
-
-
-
-    }
+}

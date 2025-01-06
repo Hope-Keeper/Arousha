@@ -19,23 +19,74 @@ class DocumentService(
 
     override fun createDocument(documentDto: DocumentDto): Mono<DocumentDto> {
         val listOfKeys = documentDto.body?.keys?.toList()
+        val listOfKeyValues = documentDto.body?.entries?.toList()
+        println("111111111")
+        print(listOfKeyValues)
+        val newDocument = Document(null, identifier = documentDto.identifier!!)
+        val tobedeletedList = ArrayList<Map.Entry<String?, String?>>()
+        val tobeUpdatedList = ArrayList<Map.Entry<String?, String?>>()
+        val tobeInsertedList = ArrayList<Map.Entry<String?, String?>>()
 
         val existsDoc = documentRepository.findByIdentifier(documentDto.identifier!!)
-        val toBeDeleted = existsDoc.flatMap { document ->
-            documentDetailRepository.getListOfDocumentDetailsByDocumentId(document.id!!)
-                .filter { detail -> listOfKeys?.contains(detail.documentDetailKey!!)!! }
-                .collectList()
-        }
+            .flatMap { document ->
+                newDocument.id = document.id
+                documentDetailRepository.getListOfDocumentDetailsByDocumentId(document.id!!)
+                    .map { detail ->
 
-        val newDocument = Document(null, identifier = documentDto.identifier)
+                        val tbi = listOfKeyValues?.mapNotNull { keyValue ->
+                            if (keyValue.key != detail.documentDetailKey && keyValue.value != detail.documentDetailValue) {
+                                tobeInsertedList.add(keyValue)
+                                return@map keyValue
+                            } else if (keyValue.key == detail.documentDetailKey && keyValue.value != detail.documentDetailValue) {
+                                tobeUpdatedList.add(keyValue)
+                                null
+                            } else {
+
+                                tobedeletedList.add(mapOf(detail.documentDetailKey to detail.documentDetailValue))
+                                null
+                            }
+                        }
+
+
+                    }
+                    .collectList()
+
+            }//bodyDetailsToInserted=documentDto...
+
+
+
         return documentRepository.save(newDocument).flatMap { savedDocument ->
-            val bodyDetails = documentDto.body?.entries?.map { (key, value) ->
-                DocumentDetail(null, key!!, value!!, savedDocument.id!!)
+//            val bodyDetails = documentDto.body?.entries?.map { (key, value) ->
+//                DocumentDetail(null, key!!, value!!, savedDocument.id!!)
+//
+//            }
+            val bodyDetailsToInserted = tobeInsertedList.map { t ->
+                DocumentDetail(null, t.key!!, t.value!!, savedDocument.id!!)
             }
-            val savedDetails = documentDetailRepository.saveAll(bodyDetails!!).collectList()
-            Mono.zip(savedDetails, toBeDeleted)
+
+            val bodyDetailstobedeletedList = tobedeletedList.map { t ->
+                DocumentDetail(null, t.key!!, t.value!!, savedDocument.id!!)
+
+            }
+
+
+            val bodyDetailstobeUpdatedList = tobeUpdatedList.map { t ->
+                DocumentDetail(null, t.key!!, t.value!!, savedDocument.id!!)
+
+            }
+
+
+            val savedDetails = documentDetailRepository.saveAll(bodyDetailsToInserted).collectList()
+
+            val deletedDetails = documentDetailRepository.deleteAll(bodyDetailstobedeletedList)
+
+            val updatedDetails = documentDetailRepository.deleteAll(bodyDetailstobeUpdatedList)
+
+
+
+            Mono.zip(savedDetails, deletedDetails, updatedDetails)
                 .map { t ->
-                    DocumentMapper.mapToDocumentDto(savedDocument, t.t1)
+                    DocumentMapper.mapToDocumentDto(savedDocument, t.t1 + t.t3)
                 }
         }
 

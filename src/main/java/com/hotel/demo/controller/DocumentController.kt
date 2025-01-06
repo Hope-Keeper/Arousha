@@ -23,8 +23,8 @@ class DocumentController(
     }
 
     @GetMapping("/all")
-    fun getAllDocuments(@RequestParam("value") value: String?): Flux<DocumentDto> {
-        return documentService.getDocuments(value!!)
+    fun getAllDocuments(@RequestParam("value") value: String): Flux<DocumentDto> {
+        return documentService.getDocuments(value)
     }
 
 }

@@ -3,7 +3,7 @@ server:
 
 spring:
   r2dbc:
-    url: r2dbc:postgresql://localhost:5432/todo-db
+    url: r2dbc:postgresql://localhost:5432/documentation
     username: root
     password: root
 

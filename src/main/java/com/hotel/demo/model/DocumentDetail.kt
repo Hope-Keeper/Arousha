@@ -1,9 +1,9 @@
-package com.hotel.demo.model;
+package com.hotel.demo.model
 
 import org.springframework.data.annotation.Id
 import org.springframework.data.relational.core.mapping.Table
 
-@Table
+@Table("document_details")
 data class DocumentDetail(
 
     @Id
