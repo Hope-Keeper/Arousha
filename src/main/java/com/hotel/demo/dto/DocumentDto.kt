@@ -1,10 +1,11 @@
 package com.hotel.demo.dto;
 
-import org.jetbrains.annotations.NotNull
+import jakarta.validation.constraints.NotNull
+
 
 data class DocumentDto(
     @NotNull
-    val identifier: String?=null,
+    val identifier: String? = null,
     @NotNull
-    val body: Map<String?, String? >?=null
+    val body: Map<String?, String?>? = null
 )
