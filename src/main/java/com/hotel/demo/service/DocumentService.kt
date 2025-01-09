@@ -60,27 +60,9 @@ class DocumentService(
                 .map { existingDetails ->
                     val toBeInserted = mutableListOf<DocumentDetail>()
                     val toBeDeleted = mutableListOf<DocumentDetail>()
-                    var excopy = existingDetails
                     listOfKeyValues.forEach { keyValue ->
-                        val existingDetail = excopy.find { it.documentDetailKey == keyValue.key }
-
-                        if (existingDetail !== null && existingDetail.documentDetailValue == keyValue.value) {
-                            excopy.remove(existingDetail)
-
-
-                        } else if (existingDetail !== null && existingDetail.documentDetailValue !== keyValue.value) {
-                            excopy.remove(existingDetail)
-                            toBeInserted.add(
-                                DocumentDetail(
-                                    existingDetail.id,
-                                    keyValue.key!!,
-                                    keyValue.value!!,
-                                    savedDocument.id!!
-                                )
-                            )
-
-                        } else if (existingDetail == null) {
-
+                        val existingDetail = existingDetails.find { it.documentDetailKey == keyValue.key }
+                        if (existingDetail == null) {
                             toBeInserted.add(
                                 DocumentDetail(
                                     existingDetail?.id,
@@ -89,11 +71,27 @@ class DocumentService(
                                     savedDocument.id!!
                                 )
                             )
+                        } else {
+                            if (existingDetail.documentDetailValue !== keyValue.value) {
+
+                                toBeInserted.add(
+                                    DocumentDetail(
+                                        existingDetail.id,
+                                        keyValue.key!!,
+                                        keyValue.value!!,
+                                        savedDocument.id!!
+                                    )
+                                )
+
+                            }
+                            existingDetails.remove(existingDetail)
+
+
                         }
 
 
                     }
-                    excopy.forEach { e -> toBeDeleted.add(e) }
+                    existingDetails.forEach { e -> toBeDeleted.add(e) }
                     Pair(toBeInserted, toBeDeleted)
                 }
                 .flatMap { (toBeInserted, toBeDeleted) ->
@@ -122,8 +120,8 @@ class DocumentService(
             }
 
 
-    override fun getDocuments(value: String): Flux<DocumentDto> {
-        return documentRepository.findByValue(value)
+    override fun getDocuments(value: String, key: String?): Flux<DocumentDto> {
+        return documentRepository.findByValue(value, key)
             .flatMap { document ->
                 documentDetailRepository.getListOfDocumentDetailsByDocumentId(document.id!!)
                     .collectList()

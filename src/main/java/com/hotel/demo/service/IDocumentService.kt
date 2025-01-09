@@ -7,5 +7,5 @@ import reactor.core.publisher.Mono
 interface IDocumentService {
 
     fun createDocument(documentDto: DocumentDto): Mono<DocumentDto>
-    fun getDocuments(value: String): Flux<DocumentDto>
+    fun getDocuments(value: String, key: String?): Flux<DocumentDto>
 }

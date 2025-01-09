@@ -13,10 +13,10 @@ interface IDocumentRepository : ReactiveCrudRepository<Document, Long> {
 SELECT d.* 
 FROM document_details de 
 JOIN documents d ON d.id = de.document_id 
-WHERE de.document_detail_value LIKE :value
+WHERE de.document_detail_value LIKE :value AND (:key IS NULL OR de.document_detail_key LIKE :key)
 """
     )
-    fun findByValue(value: String): Flux<Document>
+    fun findByValue(value: String, key: String?): Flux<Document>
 
     fun findByIdentifier(identifier: String): Mono<Document>
 }
